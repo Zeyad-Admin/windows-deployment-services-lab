@@ -1,22 +1,31 @@
-# Windows Deployment Services PXE Deployment Lab
+# Windows Deployment Services Deployment Lab
 
-## Overview
+## Project Overview
 
-This lab demonstrates the installation and configuration of **Windows Deployment Services (WDS)** to support network-based operating system deployment using **PXE boot**.
+This project demonstrates the installation and configuration of **Windows Deployment Services (WDS)** to enable network-based operating system deployment using **PXE boot**.
 
-The WDS server was integrated with **Active Directory** and configured to respond to both known and unknown client computers, allowing centralized operating system deployment in an enterprise environment.
+The lab environment was built using **Windows Server virtual machines** and integrates core enterprise deployment components such as:
+
+- Active Directory
+- DHCP
+- Windows Deployment Services (WDS)
+- Windows Preinstallation Environment (WinPE)
+- PXE Boot Infrastructure
+- OS Image Capture
+
+The project includes configuring a WDS server, importing boot images, and creating a capture image used to obtain deployable Windows images from reference systems.
 
 ---
 
-# Lab Objective
+# Technologies Used
 
-The objective of this lab was to:
-
-- Install Windows Deployment Services
-- Configure a dedicated storage location for deployment images
-- Integrate WDS with Active Directory
-- Enable PXE boot deployment
-- Configure PXE boot policies for automated OS installation
+- Windows Server
+- Windows Deployment Services (WDS)
+- PXE Boot
+- Active Directory
+- DHCP
+- Windows Preinstallation Environment (WinPE)
+- Hyper-V Virtualization
 
 ---
 
@@ -25,165 +34,204 @@ The objective of this lab was to:
 | Role | Hostname | Operating System |
 |-----|-----|-----|
 | Domain Controller | DC1 | Windows Server |
+| DHCP Server | DHCP | Windows Server |
 | WDS Server | WDS | Windows Server |
-| DHCP Server | DHCP1 | Windows Server |
-| Hyper-V Host | Physical | Windows |
+| Reference Machine | WIN10-REF | Windows 10 |
 
 ---
 
-# Infrastructure Overview
-
-Windows Deployment Services enables administrators to deploy operating systems across the network without requiring physical installation media.
+# Infrastructure Workflow
 
 The deployment workflow is:
 
 Client Computer  
 ⬇  
-PXE Boot  
+PXE Boot Request  
 ⬇  
-DHCP Provides IP Address  
+DHCP Assigns IP Address  
 ⬇  
 WDS Server Responds  
 ⬇  
-Boot Image Loaded  
+WinPE Boot Image Loads  
 ⬇  
-Operating System Deployment Begins
+Capture or Deployment Process Begins
 
 ---
 
-# Lab Implementation Steps
+# Assignment 1.1 — Installing and Configuring Windows Deployment Services
 
-## 1 — Create WDS Server
+## Objective
 
-A new virtual machine named **WDS** was created and joined to the domain.
+The objective of this assignment was to install and configure **Windows Deployment Services** on a dedicated server to support **PXE-based operating system deployment**.
+
+---
+
+## Creating the WDS Server
 
 ![WDS Server Created](screenshots/A1_S01_WDS_Server_Created.png)
 
 ---
 
-## 2 — Create Snapshot
-
-A checkpoint snapshot was created to allow rollback if configuration changes fail.
+## Creating a Snapshot
 
 ![WDS Snapshot](screenshots/A1_S02_WDS_Snapshot.png)
 
 ---
 
-## 3 — Join Server to Domain
+## Joining the Domain
 
-The WDS server was joined to the Active Directory domain.
-
-![Domain Join](screenshots/A1_S03_WDS_Domain_Joined.png)
+![Domain Joined](screenshots/A1_S03_WDS_Domain_Joined.png)
 
 ![Domain Join Confirmation](screenshots/A1_S04_Domain_Join_Confirmation.png)
 
 ---
 
-## 4 — Configure Static IP Address
-
-The WDS server was assigned a static IP address and reserved in DHCP.
+## Configuring Static IP
 
 ![Static IP](screenshots/A1_S05_Static_IP_Config.png)
 
 ---
 
-## 5 — Attach Secondary Disk for Deployment Images
-
-A 40GB disk was attached to store operating system deployment images.
-
-The disk was formatted as **NTFS**.
+## Preparing Deployment Disk
 
 ![Disk Formatted](screenshots/A1_S06_WDS_Images_Disk_Formatted.png)
 
 ---
 
-## 6 — Create RemoteInstall Folder
+## Creating RemoteInstall Folder
 
-A folder named **RemoteInstall** was created on the secondary disk.
-
-```
-E:\RemoteInstall
-```
-
-![RemoteInstall Folder](screenshots/A1_S07_RemoteInstall_Folder_Created.png)
+![RemoteInstall Folder](screenshots/A1_S07_RemoteInstall_Folder.png)
 
 ---
 
-# Installing Windows Deployment Services
-
-WDS was installed using **Server Manager**.
-
-Steps:
-
-1. Open Server Manager
-2. Add Roles and Features
-3. Select Role-based Installation
-4. Choose Windows Deployment Services
-5. Select Role Services:
-
-- Deployment Server
-- Transport Server
+## Installing WDS Role
 
 ![WDS Installation](screenshots/A1_S08_WDS_Role_Installation.png)
 
 ---
 
-# Configuring Windows Deployment Services
+## Configuring RemoteInstall Location
 
-After installation, the WDS server was configured using the **Configure Server Wizard**.
-
-The deployment folder was set to:
-
-```
-E:\RemoteInstall
-```
-
-![RemoteInstall Location](screenshots/A1_S09_RemoteInstall_Location_Config.png)
+![RemoteInstall Location](screenshots/A1_S09_RemoteInstall_Location.png)
 
 ---
 
-# PXE Server Configuration
-
-The PXE server was configured to respond to both known and unknown client computers.
+## Configuring PXE Server
 
 ![PXE Server Settings](screenshots/A1_S10_PXE_Server_Settings.png)
 
 ---
 
-# PXE Boot Policy
+## WDS Server Properties
 
-PXE boot behavior was configured under **Server Properties → Boot Tab**.
-
-Policy used:
-
-```
-Continue the PXE boot unless the user presses ESC
-```
-
-This allows automated network boot while still providing a manual exit option.
-
-![WDS Server Properties](screenshots/A1_S11_WDS_Server_Properties.png)
-
-![PXE Boot Policy](screenshots/A1_S12_PXE_Boot_Policy_Configured.png)
+![WDS Properties](screenshots/A1_S11_WDS_Server_Properties.png)
 
 ---
 
-# Skills Demonstrated
+## PXE Boot Policy
 
-- Windows Server Administration
-- Windows Deployment Services
-- PXE Boot Deployment
-- Active Directory Integration
-- DHCP Coordination
-- Enterprise OS Deployment Infrastructure
+![PXE Boot Policy](screenshots/A1_S12_PXE_Boot_Policy.png)
+
+---
+
+# Assignment 1.2 — Creating Windows Deployment Boot Images for Image Capture
+
+## Objective
+
+The objective of this assignment was to configure **WDS to support operating system image capture** by importing a Windows Preinstallation Environment (WinPE) boot image and creating a capture image.
+
+---
+
+## Creating the Software Share
+
+A folder named **Software** was created on the WDS server to store installation media.
+
+![Software Folder](screenshots/A12_S01_E-Software-Folder-Created.png)
+
+![Share Permissions](screenshots/A12_S02_E-Software-Share-Permissions.png)
+
+---
+
+## Copying and Mounting Windows Installation Media
+
+The Windows 10 ISO was copied to the Software share and mounted.
+
+![ISO Copied](screenshots/A12_S03_Win10ISO-Copied-to-Software.png)
+
+![ISO Mounted](screenshots/A12_S04_Win10ISO-Mounted-Sources.png)
+
+---
+
+## Opening the WDS Console
+
+![Boot Images Empty](screenshots/A12_S05_WDS-Console-BootImages-Empty.png)
+
+---
+
+## Adding the Windows Boot Image
+
+Boot image imported from:
+
+E:\Sources\boot.wim
+
+
+![Select boot.wim](screenshots/A12_S06_AddBootImage-Select-bootwim.png)
+
+![Boot Image Metadata](screenshots/A12_S07_AddBootImage-Metadata-Windows10Boot.png)
+
+![Boot Image Added](screenshots/A12_S08_Windows10Boot-Added.png)
+
+---
+
+## Creating the Capture Boot Image
+
+A capture image was created from the Windows10Boot image.
+
+![Create Capture Image](screenshots/A12_S09_CreateCaptureImage-ContextMenu.png)
+
+![Capture Metadata](screenshots/A12_S10_CaptureImage-Metadata-Location.png)
+
+![Capture Progress](screenshots/A12_S11_CaptureImage-Progress.png)
+
+---
+
+## Adding the Capture Image to WDS
+
+![Select Capture WIM](screenshots/A12_S13_AddBootImage-Select-CaptureWIM.png)
+
+![Capture Complete](screenshots/A12_S13_CaptureImage-Complete.png)
+
+![Wizard Summary](screenshots/A12_S14_AddImageWizard-Summary.png)
+
+---
+
+## Verification of Boot Images
+
+![Boot Images Final](screenshots/A12_S16_BootImages-Final.png)
+
+---
+
+# Important Notes
+
+- Windows Server 2025 WDS does **not support Windows 11 boot images for capture**
+- Windows 10 boot images must be used
+- Capture images must be added to WDS to be available for PXE boot
+
+---
+
+# Outcome
+
+The Windows Deployment Services server was successfully prepared for **network-based operating system capture and deployment**.
+
+A **WinPE capture image** named **Win10ITCapture** was created to capture reference installations and support automated deployment across multiple machines.
 
 ---
 
 # Conclusion
 
-This lab demonstrates how to deploy and configure **Windows Deployment Services** to support centralized operating system deployment across a network.
+This project demonstrates how **Windows Deployment Services enables centralized operating system deployment** using PXE boot and capture images.  
 
-Using PXE boot and Active Directory integration significantly simplifies operating system provisioning in enterprise environments.
+Using WDS significantly reduces manual installation effort and ensures consistent operating system deployment across enterprise environments.
 
 ---
 
