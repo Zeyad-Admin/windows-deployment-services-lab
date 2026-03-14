@@ -1,19 +1,22 @@
-# Windows Deployment Services Deployment Lab
+# Windows Deployment Services PXE Deployment Lab
 
-## Project Overview
+## Overview
 
-This project demonstrates the installation and configuration of **Windows Deployment Services (WDS)** to enable network-based operating system deployment using **PXE boot**.
+This project demonstrates the installation and configuration of **Windows Deployment Services (WDS)** to support network-based operating system deployment using **PXE boot**.
 
-The lab environment was built using **Windows Server virtual machines** and integrates core enterprise deployment components such as:
+The environment integrates several enterprise infrastructure services including:
 
 - Active Directory
 - DHCP
-- Windows Deployment Services (WDS)
+- Windows Deployment Services
 - Windows Preinstallation Environment (WinPE)
-- PXE Boot Infrastructure
-- OS Image Capture
+- PXE Boot infrastructure
+- Windows image capture and deployment
 
-The project includes configuring a WDS server, importing boot images, and creating a capture image used to obtain deployable Windows images from reference systems.
+The project consists of two major assignments:
+
+- **Assignment 1.1** – Installing and Configuring Windows Deployment Services
+- **Assignment 1.2** – Creating Windows Deployment Boot Images for Image Capture
 
 ---
 
@@ -42,7 +45,7 @@ The project includes configuring a WDS server, importing boot images, and creati
 
 # Infrastructure Workflow
 
-The deployment workflow is:
+The deployment process follows this sequence:
 
 Client Computer  
 ⬇  
@@ -54,7 +57,7 @@ WDS Server Responds
 ⬇  
 WinPE Boot Image Loads  
 ⬇  
-Capture or Deployment Process Begins
+Deployment or Image Capture Begins
 
 ---
 
@@ -62,7 +65,7 @@ Capture or Deployment Process Begins
 
 ## Objective
 
-The objective of this assignment was to install and configure **Windows Deployment Services** on a dedicated server to support **PXE-based operating system deployment**.
+Install and configure **Windows Deployment Services (WDS)** to support network-based operating system deployment.
 
 ---
 
@@ -86,7 +89,7 @@ The objective of this assignment was to install and configure **Windows Deployme
 
 ---
 
-## Configuring Static IP
+## Configuring Static IP Address
 
 ![Static IP](screenshots/A1_S05_Static_IP_Config.png)
 
@@ -138,7 +141,7 @@ The objective of this assignment was to install and configure **Windows Deployme
 
 ## Objective
 
-The objective of this assignment was to configure **WDS to support operating system image capture** by importing a Windows Preinstallation Environment (WinPE) boot image and creating a capture image.
+Configure **Windows Deployment Services** to support operating system image capture by importing a **WinPE boot image** and creating a capture image.
 
 ---
 
@@ -172,6 +175,7 @@ The Windows 10 ISO was copied to the Software share and mounted.
 
 Boot image imported from:
 
+
 E:\Sources\boot.wim
 
 
@@ -184,8 +188,6 @@ E:\Sources\boot.wim
 ---
 
 ## Creating the Capture Boot Image
-
-A capture image was created from the Windows10Boot image.
 
 ![Create Capture Image](screenshots/A12_S09_CreateCaptureImage-ContextMenu.png)
 
@@ -223,15 +225,15 @@ A capture image was created from the Windows10Boot image.
 
 The Windows Deployment Services server was successfully prepared for **network-based operating system capture and deployment**.
 
-A **WinPE capture image** named **Win10ITCapture** was created to capture reference installations and support automated deployment across multiple machines.
+A **WinPE capture image** named **Win10ITCapture** was created to capture a reference Windows installation and deploy standardized images across multiple systems.
 
 ---
 
 # Conclusion
 
-This project demonstrates how **Windows Deployment Services enables centralized operating system deployment** using PXE boot and capture images.  
+This project demonstrates how **Windows Deployment Services enables centralized operating system deployment** using PXE boot and capture images.
 
-Using WDS significantly reduces manual installation effort and ensures consistent operating system deployment across enterprise environments.
+Using WDS significantly reduces manual installation time and ensures consistent operating system deployment across enterprise environments.
 
 ---
 
